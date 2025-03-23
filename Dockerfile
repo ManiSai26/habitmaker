@@ -18,6 +18,7 @@ COPY . $APP_HOME
 
 RUN chmod +x $APP_HOME
 RUN dos2unix entrypoint.prod.sh
+RUN chmod +x /entrypoint.prod.sh
 EXPOSE 8000
 ENV PORT=8000
 ENTRYPOINT ["./entrypoint.prod.sh"]
