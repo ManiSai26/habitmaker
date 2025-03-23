@@ -146,3 +146,7 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.AllowAny",  # Change to IsAuthenticated if needed
     ]
 }
+CSRF_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://prod--habit-maker--cw9gj6cxzkr8.code.run"
+]
