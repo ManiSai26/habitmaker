@@ -1,26 +1,36 @@
 FROM python:3.12.4-bookworm
 
+# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+# Create and set working directory
 RUN mkdir -p /home/app
-
 ENV HOME=/home/app
 ENV APP_HOME=/home/app/web
 RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
-RUN pip install --upgrade pip
+
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends netcat-traditional dos2unix
-COPY ./requirements.txt $APP_HOME
-RUN pip install -r requirements.txt
 
-COPY . $APP_HOME
+# Upgrade pip
+RUN pip install --upgrade pip
 
-RUN chmod +x $APP_HOME
+# Copy and install dependencies first for better caching
+COPY ./requirements.txt $APP_HOME/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application files
+COPY . $APP_HOME/
+
+# Fix permissions for entrypoint
 COPY ./entrypoint.prod.sh /entrypoint.prod.sh
-RUN dos2unix entrypoint.prod.sh
-RUN chmod +x /entrypoint.prod.sh
+RUN dos2unix /entrypoint.prod.sh && chmod +x /entrypoint.prod.sh
+
+# Expose port
 EXPOSE 8000
 ENV PORT=8000
-ENTRYPOINT ["./entrypoint.prod.sh"]
-# CMD ["gunicorn","mainapp.wsgi:application"]
+
+# Run entrypoint script
+ENTRYPOINT ["/entrypoint.prod.sh"]
