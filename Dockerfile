@@ -17,6 +17,7 @@ RUN pip install -r requirements.txt
 COPY . $APP_HOME
 
 RUN chmod +x $APP_HOME
+COPY ./entrypoint.prod.sh /entrypoint.prod.sh
 RUN dos2unix entrypoint.prod.sh
 RUN chmod +x /entrypoint.prod.sh
 EXPOSE 8000
